@@ -4,6 +4,7 @@
 # Purpose: Detect when changes have been made to target remote repository   #
 # Dependencies: install.sh has initiated on the system                      #
 #===========================================================================#
+# Set global variables
 REPO_SYNC_DIR=/home/repoGrabbers
 REPO_SYNC_HOME=/home/repoSync
 REPO_COMMIT="$(cat ${REPO_SYNC_HOME}/REPO)"
@@ -34,7 +35,6 @@ firstTimeSetup () {
 grabLatestCommit() {
     if [ $(ps -eaf | grep rsync | grep -v grep | wc -l) -eq 0 ];
     then
-        # Add logic here for error handling
         git -C ${REPO_SYNC_DIR}/repos pull upstream master 
     else
         echo "DEBUG: End User Currently Downloading Update! Cannot Unpack! Waiting until next check time."
@@ -42,7 +42,9 @@ grabLatestCommit() {
         exit
     fi
 }
-
+#=============================================
+# MAIN SCRIPT
+#=============================================
 firstTimeSetup
     commitHash=$(git ls-remote ${REPO_COMMIT} HEAD | awk '{ print $1 }')
     # echo "DEBUG: GIT WEBPAGE HASH: ${commitHash}"
@@ -52,6 +54,6 @@ firstTimeSetup
         # echo "DEBUG: Commit to remote repo has been made!"
         grabLatestCommit
         echo ${commitHash} > /tmp/commitHash
-    else
-        # echo "DEBUG: Latest commit remains unchanged."
+    # else
+    #      echo "DEBUG: Latest commit remains unchanged."
     fi
